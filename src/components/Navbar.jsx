@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { toast } from "react-toastify"
 import {
-  signInSuccess,
+  signoutSuccess,
   signoutFailure,
   signoutStart,
 } from "../redux/user/userSlice"
@@ -29,28 +29,57 @@ const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
     handleClearSearch()
   }
 
+  // const onLogout = async () => {
+  //   try {
+  //     dispatch(signoutStart())
+
+  //     // const res = await axios.get("http://localhost:3000/api/auth/signout", {
+  //     const res = await axios.get("https://dis-caudal.onrender.com/api/auth/signout", {
+  //       withCredentials: true,
+  //     })
+
+  //     if (res.data.success === false) {
+  //       dispatch(signoutFailure(res.data.message))
+  //       toast.error(res.data.message)
+  //       return
+  //     }
+
+  //     toast.success(res.data.message)
+  //     dispatch(signInSuccess())
+  //     navigate("/login")
+  //   } catch (error) {
+  //     toast.error(error.message)
+  //     dispatch(signoutFailure(error.message))
+  //   }
+  // }
+
   const onLogout = async () => {
     try {
-      dispatch(signoutStart())
-
-      const res = await axios.get("http://localhost:3000/api/auth/signout", {
+      dispatch(signoutStart());
+  
+      // Call the logout endpoint
+      const res = await axios.post("https://dis-caudal.onrender.com/api/auth/signout", {}, {
         withCredentials: true,
-      })
-
-      if (res.data.success === false) {
-        dispatch(signoutFailure(res.data.message))
-        toast.error(res.data.message)
-        return
+      });
+  
+      // Check the response
+      if (res.data.success) {
+        // Dispatch success and navigate to the login page
+        toast.success(res.data.message);
+        dispatch(signoutSuccess()); // Make sure to use signoutSuccess to reset Redux state
+        navigate("/login");
+      } else {
+        // Handle error case
+        dispatch(signoutFailure(res.data.message));
+        toast.error(res.data.message);
       }
-
-      toast.success(res.data.message)
-      dispatch(signInSuccess())
-      navigate("/login")
     } catch (error) {
-      toast.error(error.message)
-      dispatch(signoutFailure(error.message))
+      // Handle any errors that occur during the request
+      toast.error(error.message);
+      dispatch(signoutFailure(error.message));
     }
-  }
+  };
+  
 
   return (
     <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow">

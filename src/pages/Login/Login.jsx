@@ -40,7 +40,8 @@ const Login = () => {
       dispatch(signInStart())
 
       const res = await axios.post(
-        "http://localhost:3000/api/auth/signin",
+        // "http://localhost:3000/api/auth/signin",
+        "https://dis-caudal.onrender.com/api/auth/signin",
         { email, password },
         { withCredentials: true }
       )
@@ -50,6 +51,7 @@ const Login = () => {
         console.log(res.data)
         dispatch(signInFailure(data.message))
       }
+      console.log(res)
 
       toast.success(res.data.message)
       dispatch(signInSuccess(res.data))
